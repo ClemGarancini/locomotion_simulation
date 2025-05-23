@@ -8,7 +8,7 @@ import os
 import json
 import shutil
 import gym
-
+from pathlib import Path
 
 def load_config(json_path):
     with open(json_path, "r") as f:
@@ -23,29 +23,36 @@ def main(config_path: str):
     checkpoint_freq = checkpoint_freq
 
     task = "locomotion:A1GymEnv-v1"
+    path_to_logs = Path(__file__).resolve().parent / "logs"
+
 
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     logfile = "PPO_" + task + "_" + str(timestamp)
     logfile_monitor = os.path.join(
-        "/Users/clement/Documents/PolyMontreal/locomotion_simulation/logs/monitor",
+        f"{path_to_logs}/monitor",
         logfile,
         "",
     )
     logfile_model = os.path.join(
-        "/Users/clement/Documents/PolyMontreal/locomotion_simulation/logs/models",
+        f"{path_to_logs}/models",
         logfile,
     )
     logfile_parameters = os.path.join(
-        "/Users/clement/Documents/PolyMontreal/locomotion_simulation/logs/parameters",
+        f"{path_to_logs}/parameters",
         logfile + ".json",
     )
     logfile_checkpoints = (
-        "/Users/clement/Documents/PolyMontreal/locomotion_simulation/logs/checkpoints"
+        f"{path_to_logs}/checkpoints"
     )
-
+    os.makedirs(logfile_monitor, exist_ok=True)
+    os.makedirs(logfile_model, exist_ok=True)
+    os.makedirs(logfile_checkpoints, exist_ok=True)
+    os.makedirs(logfile_parameters, exist_ok=True)
     print("Making gym envs...")
+
     env = gym.make(task)
     env = Monitor(env, filename=logfile_monitor)
+
     print("Done")
 
     model = PPO("MlpPolicy", env=env, verbose=1, n_steps=512)
