@@ -1,0 +1,9 @@
+{
+    "environment": {
+        "num_envs": 1
+    },
+    "training": {
+        "total_timesteps": 10000000,
+        "checkpoint_timesteps": 200000
+    }
+}
